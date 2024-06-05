@@ -2,9 +2,20 @@
 
 $path = __DIR__ . '/';
 
+$countInjections = 0;
 foreach ($_GET as $get) {
-    $path .= $get . '/';
+    $get = htmlspecialchars($get);
+    $get = str_replace('..', '', $get, $countInjections);
+    
+    if ($countInjections > 0) {
+        echo "ERROR: The injection found."; 
+        return;
+    }
+
+    $path .= $get . '/';    
 }
+
+$newstr = filter_var($str, FILTER_SANITIZE_STRING);
 
 if(file_exists($path) === false && is_dir($path) === false) {
     echo "ERROR: The directory does not exist.";
